@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Panel de Administrador - JLG</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f2f4f7;
+        }
+
+        .navbar {
+            background: #222;
+            color: white;
+            padding: 15px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .navbar h2 {
+            margin: 0;
+        }
+
+        .navbar span {
+            font-weight: bold;
+        }
+
+        .contenido {
+            width: 100%;
+            max-width: 1000px;
+            margin: 35px auto;
+            padding: 30px;
+        }
+
+        .encabezado {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.12);
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .logo {
+            display: block;
+            width: 100%;
+            max-width: 500px;
+            height: auto;
+            margin: 0 auto 20px auto;
+        }
+
+        .encabezado h1 {
+            margin: 10px 0;
+            color: #222;
+        }
+
+        .encabezado p {
+            margin: 8px 0;
+            color: #555;
+        }
+
+        .rol {
+            font-weight: bold;
+            font-size: 18px;
+        }
+
+        .menu {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+        }
+
+        .opcion {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.10);
+            text-align: center;
+        }
+
+        .opcion h2 {
+            margin-top: 0;
+            color: #222;
+        }
+
+        .opcion p {
+            color: #666;
+            min-height: 40px;
+        }
+
+        .boton {
+            display: inline-block;
+            padding: 11px 25px;
+            border-radius: 6px;
+            background: #007bff;
+            color: white;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .boton:hover {
+            background: #0056b3;
+        }
+
+        .cerrar {
+            text-align: center;
+            margin-top: 30px;
+        }
+
+        .cerrar button {
+            padding: 11px 25px;
+            border: none;
+            border-radius: 6px;
+            background: #555;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .cerrar button:hover {
+            background: #222;
+        }
+
+        @media (max-width: 700px) {
+            .menu {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <nav class="navbar">
+        <h2>DemoJlg</h2>
+        <span>Panel de Administrador</span>
+    </nav>
+
+    <div class="contenido">
+
+        <div class="encabezado">
+
+            <img src="/img/LogoJLG.jpeg"
+                 alt="Logo JLG"
+                 class="logo">
+
+            <h1>Panel de Administración</h1>
+
+            <p>
+                Bienvenido, Administrador
+            </p>
+
+            <p class="rol">
+                Rol: ADMIN
+            </p>
+
+        </div>
+
+
+        <div class="menu">
+
+            <div class="opcion">
+
+                <h2>📄 Cotizaciones</h2>
+
+                <p>
+                    Gestionar las cotizaciones de los clientes.
+                </p>
+
+                <a href="#" class="boton">
+                    Ver cotizaciones
+                </a>
+
+            </div>
+
+
+            <div class="opcion">
+
+                <h2>💰 Cuentas de cobro</h2>
+
+                <p>
+                    Administrar las cuentas de cobro.
+                </p>
+
+                <a href="#" class="boton">
+                    Ver cuentas de cobro
+                </a>
+
+            </div>
+
+
+            <div class="opcion">
+
+                <h2>👥 Usuarios</h2>
+
+                <p>
+                    Gestionar los usuarios registrados en el sistema.
+                </p>
+
+                <a href="#" class="boton">
+                    Gestionar usuarios
+                </a>
+
+            </div>
+
+
+            <div class="opcion">
+
+                <h2>📊 Reportes</h2>
+
+                <p>
+                    Consultar información y reportes del sistema.
+                </p>
+
+                <a href="#" class="boton">
+                    Ver reportes
+                </a>
+
+            </div>
+
+        </div>
+
+
+        <div class="cerrar">
+
+            <form th:action="@{/logout}" method="post">
+
+                <button type="submit">
+                    Cerrar sesión
+                </button>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</body>
+
+</html>
