@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Registro de usuario</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background-color: #f4f6f8;
+
+            display: flex;
+            justify-content: center;
+            align-items: center;
+
+            min-height: 100vh;
+        }
+
+        .registro-container {
+            width: 100%;
+            max-width: 420px;
+            padding: 30px;
+
+            background-color: white;
+            border-radius: 10px;
+
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+        }
+        .logo {
+            display: block;
+            width: 100%;
+            max-width: 360px;
+            height: auto;
+            margin: 0 auto 20px auto;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 25px;
+            color: #333;
+        }
+        
+
+        .campo {
+            margin-bottom: 18px;
+        }
+
+        .campo label {
+            display: block;
+            margin-bottom: 6px;
+
+            font-weight: bold;
+            color: #444;
+        }
+
+        .campo input,
+        .campo select {
+            width: 100%;
+            padding: 11px;
+
+            border: 1px solid #ccc;
+            border-radius: 6px;
+
+            font-size: 15px;
+        }
+
+        .campo input:focus,
+        .campo select:focus {
+            outline: none;
+            border-color: #007bff;
+        }
+
+        .boton {
+            width: 100%;
+            padding: 12px;
+
+            border: none;
+            border-radius: 6px;
+
+            background-color: #007bff;
+            color: white;
+
+            font-size: 16px;
+            font-weight: bold;
+
+            cursor: pointer;
+        }
+
+        .boton:hover {
+            background-color: #0056b3;
+        }
+
+        .login-link {
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        .login-link a {
+            color: #007bff;
+            text-decoration: none;
+        }
+
+        .login-link a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="registro-container">
+
+    <img src="/img/LogoJLG.jpeg"
+         alt="Logo JLG"
+         class="logo">
+
+         
+
+    
+        <h1>Crear cuenta</h1>
+
+        <form th:action="@{/registro}"
+              th:object="${usuario}"
+              method="post">
+
+            <div class="campo">
+                <label for="nombre">Nombre</label>
+
+                <input type="text"
+                       id="nombre"
+                       th:field="*{nombre}"
+                       placeholder="Ingrese su nombre"
+                       required>
+            </div>
+
+            <div class="campo">
+                <label for="correo">Correo electrónico</label>
+
+                <input type="email"
+                       id="correo"
+                       th:field="*{correo}"
+                       placeholder="Ingrese su correo"
+                       required>
+            </div>
+
+            <div class="campo">
+                <label for="password">Contraseña</label>
+
+                <input type="password"
+                       id="password"
+                       th:field="*{password}"
+                       placeholder="Ingrese su contraseña"
+                       required>
+            </div>
+            <div class="campo">
+                <label for="rol">Tipo de usuario</label>
+
+                <select id="rol"
+                    th:field="*{rol}"
+                    required>
+                <option value="USER">Usuario</option>
+                <option value="ADMIN">Administrador</option>
+                </select>
+            </div>
+
+            <button type="submit" class="boton">
+                Registrarse
+            </button>
+
+        </form>
+
+        <div class="login-link">
+            ¿Ya tienes una cuenta?
+            <a th:href="@{/login}">Iniciar sesión</a>
+        </div>
+
+    </div>
+
+</body>
+
+</html>
+

@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Iniciar sesión</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f2f4f7;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .login-container {
+            width: 380px;
+            background: white;
+            padding: 35px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+        }
+        .logo {
+            display: block;
+            width: 100%;
+            max-width: 360px;
+            height: auto;
+            margin: 0 auto 20px auto;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .campo {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+        }
+
+        input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            font-size: 15px;
+        }
+
+        .boton {
+            width: 100%;
+            padding: 12px;
+            border: none;
+            border-radius: 6px;
+            background: #333;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        .boton:hover {
+            background: #555;
+        }
+
+        .mensaje {
+            padding: 10px;
+            margin-bottom: 20px;
+            border-radius: 6px;
+            text-align: center;
+        }
+
+        .exito {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .error {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .registro-link {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .registro-link a {
+            color: #333;
+            font-weight: bold;
+            text-decoration: none;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="registro-container">
+
+    <img src="/img/LogoJLG.jpeg"
+         alt="Logo JLG"
+         class="logo">
+
+    <h1>Iniciar sesión</h1>
+
+    <!-- Mensaje cuando el registro fue exitoso -->
+    <div th:if="${param.registroExitoso}"
+         class="mensaje exito">
+        Registro realizado correctamente. Ahora puedes iniciar sesión.
+    </div>
+
+    <!-- Mensaje cuando las credenciales son incorrectas -->
+    <div th:if="${param.error}"
+         class="mensaje error">
+        Correo o contraseña incorrectos.
+    </div>
+
+    <!-- Mensaje después de cerrar sesión -->
+    <div th:if="${param.logout}"
+         class="mensaje exito">
+        Has cerrado sesión correctamente.
+    </div>
+
+    <!-- Formulario de Spring Security -->
+    <form th:action="@{/login}" method="post">
+
+        <div class="campo">
+            <label for="username">Correo electrónico</label>
+
+            <input
+                type="email"
+                id="username"
+                name="username"
+                placeholder="Ingrese su correo"
+                required>
+        </div>
+
+        <div class="campo">
+            <label for="password">Contraseña</label>
+
+            <input
+                type="password"
+                id="password"
+                name="password"
+                placeholder="Ingrese su contraseña"
+                required>
+        </div>
+
+        <button type="submit" class="boton">
+            Iniciar sesión
+        </button>
+
+    </form>
+
+    <div class="registro-link">
+        ¿No tienes una cuenta?
+        <a th:href="@{/registro}">Registrarse</a>
+    </div>
+
+</div>
+
+</body>
+</html>
+

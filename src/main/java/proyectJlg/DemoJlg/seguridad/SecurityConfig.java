@@ -10,6 +10,12 @@ import org.springframework.security.web.SecurityFilterChain;
 @Configuration
 public class SecurityConfig {
 
+    private final RoleAuthenticationSuccessHandler successHandler;
+
+    public SecurityConfig(RoleAuthenticationSuccessHandler successHandler) {
+        this.successHandler = successHandler;
+    }
+
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
@@ -48,7 +54,7 @@ public class SecurityConfig {
             // Configuración del login
             .formLogin(form -> form
                 .loginPage("/login")
-                .defaultSuccessUrl("/inicio", true)
+                .successHandler(successHandler)
                 .permitAll()
             )
 
