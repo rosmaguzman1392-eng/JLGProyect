@@ -131,6 +131,17 @@
          class="mensaje exito">
         Has cerrado sesión correctamente.
     </div>
+    <!-- Mensaje si la sesión fue expulsada por otro login -->
+    <div th:if="${param.expired}"
+          class="mensaje error">
+        Su sesión fue cerrada porque inició sesión en otro dispositivo.
+    </div>
+
+    <!-- Mensaje si la sesión caducó por tiempo de inactividad -->
+    <div th:if="${param.invalid}" 
+    class="mensaje error">
+    Su sesión ha caducado por inactividad. Por favor, inicie sesión de nuevo.
+    </div>
 
     <!-- Formulario de Spring Security -->
     <form th:action="@{/login}" method="post">
