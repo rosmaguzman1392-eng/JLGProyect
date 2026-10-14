@@ -1,3 +1,4 @@
+.
 # Descripción del proyecto de aula.
 Sistema web de gestión comercial para JLG Aislamientos Térmicos, Industriales y
 hoteleros, Actualmente, JLG realiza parte importante del proceso comercial de
@@ -24,3 +25,11 @@ encuentra desarrollada con Spring Boot bajo el patrón MVC.
 |ID de la Historia| Rol| Funcionalidad | Criterios de Evaluación|
 |---|----|---|---|
 |HU01| ADMIN/USER |Quiero iniciar sesión de forma segura usando mis credenciales o mi cuenta de Google,Para que pueda acceder a las funcionalidades permitidas para mi rol, garantizando la confidencialidad de la información de la empresa|- El sistema debe permitir el login con correo y contraseña encriptada (BCrypt). - El sistema debe permitir el login alternativo mediante OAuth 2.0 (Google). - El sistema debe redirigir al dashboard correspondiente según el rol (ADMIN o USER). - El sistema debe limitar a 1 sesión activa por usuario, expulsando la anterior si se inicia en otro dispositivo. - Al cerrar sesión, la sesión debe invalidarse completamente y redirigir al login con un mensaje de confirmación|
+
+## Módulo de Minería de Datos y Documentación
+Este proyecto se ha extendido para Incorporar un flujo de análisis de datos y Documentos.
+- **'/data'**: Contiene los conjuntos de datos en formato CSV ('dataset_mineria_cotizaciones.csv') utilizados para el procesamiento.
+- **'/mineria-datos'**: Incluye los Script de análisis y el Informe resumido ('analisis_mineapp.md').
+- **'/documentos'**: Almacena los entregables oficiales en PDF:
+    - 'propuesta_modelo.pdf'
+    - 'informe_metodologico.pdf'
