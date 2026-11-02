@@ -59,8 +59,8 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/", "/login", "/registro", "/auth/**", "/error/**",
-                        "/css/**", "/js/**", "/img/**").permitAll()
+                .requestMatchers("/",    "/login",    "/registro",    "/auth/**",    "/oauth2/**",    "/login/oauth2/**",
+                 "/error/**",    "/css/**",    "/js/**",    "/img/**").permitAll()
                 .requestMatchers("/admin/**").hasRole("ADMIN")
                 .requestMatchers("/user/**").hasRole("USER")
                 .anyRequest().authenticated()
@@ -71,10 +71,10 @@ public class SecurityConfig {
             )
             .exceptionHandling(exception -> exception
                 .authenticationEntryPoint((request, response, authException) ->
-                        response.sendRedirect("/error/401"))
+                  response.sendRedirect("/login"))
                 .accessDeniedHandler((request, response, accessDeniedException) ->
-                        response.sendRedirect("/error/403"))
-            )
+                  response.sendRedirect("/error/403"))
+)
             .sessionManagement(session -> session
                 .maximumSessions(1)
                 .maxSessionsPreventsLogin(false)
