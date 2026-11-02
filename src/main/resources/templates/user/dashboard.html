@@ -1,281 +1,311 @@
 <!DOCTYPE html>
 <html lang="es" xmlns:th="http://www.thymeleaf.org">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <title>Panel de Usuario - JLG</title>
-
+    <title>Panel de Usuario - JLG Aislamientos</title>
     <style>
         * {
+            margin: 0;
+            padding: 0;
             box-sizing: border-box;
         }
 
         body {
-            margin: 0;
-            font-family: Arial, sans-serif;
-            background: #f2f4f7;
-        }
-
-        .navbar {
-            background: #222;
-            color: white;
-            padding: 15px 30px;
-
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f5f7fa;
             display: flex;
-            justify-content: space-between;
-            align-items: center;
+            min-height: 100vh;
         }
 
-        .navbar h2 {
-            margin: 0;
+        /* SIDEBAR */
+        .sidebar {
+            width: 260px;
+            background: #1a2332;
+            color: white;
+            padding: 20px 0;
+            position: fixed;
+            height: 100vh;
+            overflow-y: auto;
         }
 
-        .navbar span {
-            font-weight: bold;
+        .sidebar-header {
+            padding: 0 20px 20px;
+            border-bottom: 1px solid #2d3748;
+            margin-bottom: 20px;
         }
 
-        .contenido {
+        .sidebar-header img {
             width: 100%;
-            max-width: 1000px;
-            margin: 35px auto;
-            padding: 30px;
-        }
-
-        .encabezado {
-            background: white;
-            padding: 25px;
-
-            border-radius: 12px;
-
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.12);
-
-            text-align: center;
-
-            margin-bottom: 30px;
-        }
-
-        .logo {
-            display: block;
-            width: 100%;
-            max-width: 500px;
+            max-width: 200px;
             height: auto;
-
-            margin: 0 auto 20px auto;
         }
 
-        .encabezado h1 {
-            margin: 10px 0;
-            color: #222;
+        .sidebar-menu {
+            list-style: none;
         }
 
-        .encabezado p {
-            margin: 8px 0;
-            color: #555;
+        .sidebar-menu li {
+            margin: 5px 0;
         }
 
-        .rol {
-            font-weight: bold;
+        .sidebar-menu a {
+            display: flex;
+            align-items: center;
+            padding: 12px 20px;
+            color: #cbd5e0;
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+
+        .sidebar-menu a:hover,
+        .sidebar-menu a.active {
+            background: #2d3748;
+            color: white;
+            border-left: 3px solid #007bff;
+        }
+
+        .sidebar-menu .icon {
+            margin-right: 12px;
             font-size: 18px;
         }
 
-        .menu {
-            display: grid;
+        /* MAIN CONTENT */
+        .main-content {
+            margin-left: 260px;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
 
-            grid-template-columns: repeat(2, 1fr);
+        /* HEADER */
+        .header {
+            background: white;
+            padding: 15px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
 
+        .header-left h1 {
+            font-size: 24px;
+            color: #1a2332;
+        }
+
+        .header-left p {
+            color: #718096;
+            font-size: 14px;
+            margin-top: 5px;
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
             gap: 20px;
         }
 
-        .opcion {
-            background: white;
-
-            padding: 30px;
-
-            border-radius: 12px;
-
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.10);
-
-            text-align: center;
+        .user-info {
+            text-align: right;
         }
 
-        .opcion h2 {
-            margin-top: 0;
-            color: #222;
+        .user-info .name {
+            font-weight: bold;
+            color: #1a2332;
         }
 
-        .opcion p {
-            color: #666;
-            min-height: 40px;
-        }
-
-        .boton {
-            display: inline-block;
-
-            padding: 11px 25px;
-
-            border-radius: 6px;
-
-            background: #007bff;
-            color: white;
-
-            text-decoration: none;
-
+        .user-info .role {
+            font-size: 12px;
+            color: #38a169; /* Color verde para diferenciar rol USER */
             font-weight: bold;
         }
 
-        .boton:hover {
+        .logout-btn {
+            background: #e53e3e;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background 0.3s;
+        }
+
+        .logout-btn:hover {
+            background: #c53030;
+        }
+
+        /* CONTENT AREA */
+        .content {
+            padding: 30px;
+            flex: 1;
+        }
+
+        /* KPI CARDS */
+        .kpi-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .kpi-card {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            border-left: 4px solid #007bff;
+        }
+
+        .kpi-card h3 {
+            color: #718096;
+            font-size: 14px;
+            margin-bottom: 10px;
+        }
+
+        .kpi-card .value {
+            font-size: 32px;
+            font-weight: bold;
+            color: #1a2332;
+        }
+
+        .kpi-card .trend {
+            font-size: 12px;
+            margin-top: 8px;
+        }
+
+        .trend.up { color: #38a169; }
+        .trend.down { color: #e53e3e; }
+
+        /* MODULES GRID */
+        .modules-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .module-card {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+
+        .module-card h2 {
+            color: #1a2332;
+            margin-bottom: 10px;
+            font-size: 20px;
+        }
+
+        .module-card p {
+            color: #718096;
+            margin-bottom: 20px;
+            font-size: 14px;
+        }
+
+        .module-btn {
+            display: inline-block;
+            padding: 10px 20px;
+            background: #007bff;
+            color: white;
+            text-decoration: none;
+            border-radius: 6px;
+            font-weight: bold;
+            transition: background 0.3s;
+        }
+
+        .module-btn:hover {
             background: #0056b3;
         }
 
-        .cerrar {
-            text-align: center;
-            margin-top: 30px;
-        }
-
-        .cerrar button {
-            padding: 11px 25px;
-
-            border: none;
-            border-radius: 6px;
-
-            background: #555;
-            color: white;
-
-            font-weight: bold;
-
-            cursor: pointer;
-        }
-
-        .cerrar button:hover {
-            background: #222;
-        }
-
-        @media (max-width: 700px) {
-
-            .menu {
-                grid-template-columns: 1fr;
-            }
-
+        @media (max-width: 768px) {
+            .sidebar { width: 100%; position: relative; height: auto; }
+            .main-content { margin-left: 0; }
+            body { flex-direction: column; }
         }
     </style>
 </head>
-
 <body>
-
-    <nav class="navbar">
-
-        <h2>DemoJlg</h2>
-
-        <span>Panel de Usuario</span>
-
-    </nav>
-
-
-    <div class="contenido">
-
-
-        <div class="encabezado">
-
-            <img src="/img/LogoJLG.jpeg"
-                 alt="Logo JLG"
-                 class="logo">
-
-            <h1>Panel de Usuario</h1>
-
-            <p>
-                Bienvenido, Usuario
-            </p>
-
-            <p class="rol">
-                Rol: USER
-            </p>
-
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <img src="/img/LogoJLG.jpeg" alt="JLG Aislamientos">
         </div>
-
-
-        <div class="menu">
-
-
-            <div class="opcion">
-
-                <h2>📄 Solicitar cotización</h2>
-
-                <p>
-                    Solicita una cotización para los servicios de JLG.
-                </p>
-
-                <a href="#" class="boton">
-                    Solicitar
+        <ul class="sidebar-menu">
+            <li>
+                <a href="/user/dashboard" class="active">
+                    <span class="icon"></span>
+                    Panel Principal
                 </a>
+            </li>
+            <li>
+                <a href="/user/solicitud-visita">
+                    <span class="icon">📅</span>
+                    Solicitar Visita
+                </a>
+            </li>
+            <li>
+                <a href="/user/mis-solicitudes">
+                    <span class="icon">📋</span>
+                    Mis Solicitudes
+                </a>
+            </li>
+            <li>
+                <a href="/user/perfil">
+                    <span class="icon">👤</span>
+                    Mi Perfil
+                </a>
+            </li>
+        </ul>
+    </aside>
 
+    <!-- MAIN CONTENT -->
+    <div class="main-content">
+        <!-- HEADER -->
+        <header class="header">
+            <div class="header-left">
+                <h1>Panel de Cliente / Usuario</h1>
+                <p>Bienvenido - Gestión de servicios de aislamiento térmico e industrial</p>
+            </div>
+            <div class="header-right">
+                <div class="user-info">
+                    <div class="name">Usuario Registrado</div>
+                    <div class="role">USER</div>
+                </div>
+                <form th:action="@{/logout}" method="post" style="display: inline;">
+                    <button type="submit" class="logout-btn">Cerrar Sesión</button>
+                </form>
+            </div>
+        </header>
+
+        <!-- CONTENT -->
+        <div class="content">
+            <!-- KPI CARDS (Métricas relevantes para el cliente) -->
+            <div class="kpi-grid">
+                <div class="kpi-card">
+                    <h3>SOLICITUDES ACTIVAS</h3>
+                    <div class="value">2</div>
+                    <div class="trend up">En proceso de revisión</div>
+                </div>
+                <div class="kpi-card" style="border-left-color: #ed8936;">
+                    <h3>VISITAS PROGRAMADAS</h3>
+                    <div class="value">1</div>
+                    <div class="trend down">Próxima: 15 Oct</div>
+                </div>
+                <div class="kpi-card" style="border-left-color: #38a169;">
+                    <h3>COTIZACIONES RECIBIDAS</h3>
+                    <div class="value">3</div>
+                    <div class="trend up">1 pendiente de aprobación</div>
+                </div>
+                <div class="kpi-card" style="border-left-color: #9f7aea;">
+                    <h3>SOPORTE TÉCNICO</h3>
+                    <div class="value">0</div>
+                    <div class="trend up">Sin tickets abiertos</div>
+                </div>
             </div>
 
-
-            <div class="opcion">
-
-                <h2>📋 Mis cotizaciones</h2>
-
-                <p>
-                    Consulta las cotizaciones que has solicitado.
-                </p>
-
-                <a href="#" class="boton">
-                    Ver cotizaciones
-                </a>
-
-            </div>
-
-
-            <div class="opcion">
-
-                <h2>💰 Mis cuentas de cobro</h2>
-
-                <p>
-                    Consulta tus cuentas de cobro.
-                </p>
-
-                <a href="#" class="boton">
-                    Ver cuentas
-                </a>
-
-            </div>
-
-
-            <div class="opcion">
-
-                <h2>👤 Mi perfil</h2>
-
-                <p>
-                    Consulta y administra tu información personal.
-                </p>
-
-                <a href="#" class="boton">
-                    Ver perfil
-                </a>
-
-            </div>
-
-
+            
         </div>
-
-
-        <div class="cerrar">
-
-            <form th:action="@{/logout}" method="post">
-
-                <button type="submit">
-                    Cerrar sesión
-                </button>
-
-            </form>
-
-        </div>
-
-
     </div>
-
 </body>
-
 </html>

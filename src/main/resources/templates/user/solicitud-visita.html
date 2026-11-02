@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Solicitar Visita Técnica - JLG Aislamientos</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: #f5f7fa;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #1a2332;
+            margin-bottom: 20px;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #334155;
+        }
+        input, select, textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #e2e8f0;
+            border-radius: 6px;
+            font-size: 14px;
+        }
+        textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+        .btn-submit {
+            background: #007bff;
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        .btn-submit:hover {
+            background: #0056b3;
+        }
+        .alert-success {
+            background: #d4edda;
+            color: #155724;
+            padding: 12px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            border: 1px solid #c3e6cb;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Solicitar Visita Técnica</h1>
+        
+        <!-- Mensaje de éxito -->
+        <div th:if="${mensaje}" class="alert-success">
+            <span th:text="${mensaje}"></span>
+        </div>
+        
+        <form th:action="@{/user/solicitud-visita}" th:object="${solicitud}" method="post">
+            <div class="form-group">
+                <label for="nombreCliente">Nombre del Cliente *</label>
+                <input type="text" id="nombreCliente" th:field="*{nombreCliente}" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="empresa">Empresa / Ubicación *</label>
+                <input type="text" id="empresa" th:field="*{empresa}" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="tipoServicio">Tipo de Servicio *</label>
+                <select id="tipoServicio" th:field="*{tipoServicio}" required>
+                    <option value="">-- Seleccione --</option>
+                    <option value="Aire Acondicionado">Aire Acondicionado</option>
+                    <option value="Cuarto Frío">Cuarto Frío</option>
+                    <option value="Tuberías Industriales">Tuberías Industriales</option>
+                    <option value="Sistema HVAC">Sistema HVAC</option>
+                    <option value="Otro">Otro</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label for="descripcion">Descripción de la Necesidad *</label>
+                <textarea id="descripcion" th:field="*{descripcion}" required 
+                    placeholder="Describa el problema o servicio requerido..."></textarea>
+            </div>
+            
+            <div class="form-group">
+                <label for="fechaPreferida">Fecha Preferida para la Visita *</label>
+                <input type="date" id="fechaPreferida" th:field="*{fechaPreferida}" required>
+            </div>
+            
+            <button type="submit" class="btn-submit">Enviar Solicitud</button>
+        </form>
+        
+        <p style="margin-top: 20px;">
+            <a th:href="@{/user/dashboard}">← Volver al Dashboard</a>
+        </p>
+    </div>
+</body>
+</html>
