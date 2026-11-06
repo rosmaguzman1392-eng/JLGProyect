@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Mis Solicitudes - JLG Aislamientos</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: #f5f7fa;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #1a2332;
+            margin-bottom: 20px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        th {
+            background: #f8fafc;
+            font-weight: bold;
+            color: #1a2332;
+        }
+        .estado-PENDIENTE {
+            background: #fff3cd;
+            color: #856404;
+            padding: 4px 8px;
+            border-radius: 4px;
+        }
+        .estado-APROBADA {
+            background: #d4edda;
+            color: #155724;
+            padding: 4px 8px;
+            border-radius: 4px;
+        }
+        .estado-EN_PROCESO {
+            background: #cce5ff;
+            color: #004085;
+            padding: 4px 8px;
+            border-radius: 4px;
+        }
+        .estado-COMPLETADA {
+            background: #d1ecf1;
+            color: #0c5460;
+            padding: 4px 8px;
+            border-radius: 4px;
+        }
+        .btn-back {
+            display: inline-block;
+            margin-top: 20px;
+            color: #007bff;
+            text-decoration: none;
+        }
+        .sin-solicitudes {
+            text-align: center;
+            padding: 40px;
+            color: #718096;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Mis Solicitudes de Visita</h1>
+        
+        <div th:if="${#lists.isEmpty(solicitudes)}" class="sin-solicitudes">
+            <p>No tienes solicitudes registradas.</p>
+            <a th:href="@{/user/solicitar-visita}" class="btn-back">Crear nueva solicitud →</a>
+        </div>
+        
+        <table th:if="${!#lists.isEmpty(solicitudes)}">
+            <thead>
+                <tr>
+                    <th>Fecha Creación</th>
+                    <th>Empresa</th>
+                    <th>Tipo Servicio</th>
+                    <th>Fecha Preferida</th>
+                    <th>Estado</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="solicitud : ${solicitudes}">
+                    <td th:text="${#temporals.format(solicitud.fechaCreacion, 'dd/MM/yyyy')}"></td>
+                    <td th:text="${solicitud.empresa}"></td>
+                    <td th:text="${solicitud.tipoServicio}"></td>
+                    <td th:text="${#temporals.format(solicitud.fechaPreferida, 'dd/MM/yyyy')}"></td>
+                    <td>
+                        <span th:class="'estado-' + ${solicitud.estado}" 
+                              th:text="${solicitud.estado}"></span>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        
+        <a th:href="@{/user/dashboard}" class="btn-back">← Volver al Dashboard</a>
+    </div>
+</body>
+</html>

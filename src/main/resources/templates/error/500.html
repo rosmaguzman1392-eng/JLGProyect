@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Error 500 - Error Interno del Servidor | JLG</title>
+    <style>
+        body { font-family: 'Segoe UI', sans-serif; background: #f4f6f9; text-align: center; padding-top: 80px; }
+        .card { background: white; max-width: 500px; margin: auto; padding: 40px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); }
+        h1 { font-size: 80px; color: #dc3545; margin: 0; }
+        h2 { color: #333; }
+        p { color: #666; font-size: 18px; }
+        .btn { display: inline-block; margin-top: 20px; padding: 10px 25px; background: #007bff; color: white; text-decoration: none; border-radius: 6px; }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <h1>403</h1>
+        <h2>Acceso Denegado</h2>
+        <p>No tienes los permisos necesarios para acceder a este módulo de JLG.</p>
+        <p th:if="${message}" th:text="${message}"></p>
+        <a href="/login" class="btn">Volver al Inicio</a>
+    </div>
+</body>
+</html>
