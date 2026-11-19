@@ -175,27 +175,8 @@
                 </div>
                 <div class="kpi-card" style="border-left-color: #8b5cf6;">
                     <h3>VALOR TOTAL COTIZADO</h3>
-                    <div class="value" th:text="${#numbers.formatCurrency(sumaTotal)}">$0</div>
+                    <div class="value" th:text="'$ ' + ${#numbers.formatDecimal(sumaTotal, 1, 'POINT', 0, 'COMMA')}">$0</div>
                     <div class="trend up">Suma histórica</div>
-                </div>
-            </div>
-
-            <!-- MÓDULOS -->
-            <div class="modules-grid">
-                <div class="module-card">
-                    <h2>📋 Cotizaciones</h2>
-                    <p>Consulta y gestiona las cotizaciones emitidas a clientes. Filtra por estado, cliente o fecha.</p>
-                    <a href="/admin/cotizaciones" class="module-btn">Ver Cotizaciones →</a>
-                </div>
-                <div class="module-card">
-                    <h2>💰 Cuentas de Cobro</h2>
-                    <p>Administra las cuentas de cobro generadas y haz seguimiento al estado de pagos.</p>
-                    <a href="/admin/cuentas-cobro" class="module-btn">Ver Cuentas de Cobro →</a>
-                </div>
-                <div class="module-card">
-                    <h2>👥 Gestión de Usuarios</h2>
-                    <p>Control de accesos y roles: administradores, técnicos y clientes registrados.</p>
-                    <a href="/admin/usuarios" class="module-btn">Gestionar Usuarios →</a>
                 </div>
             </div>
         </div>

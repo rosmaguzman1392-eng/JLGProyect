@@ -273,7 +273,7 @@
                             <td th:text="${cotizacion.id}"></td>
                             <td th:text="${cotizacion.cliente}"></td>
                             <td th:text="${cotizacion.fechaCotizacion}"></td>
-                            <td th:text="${#numbers.formatCurrency(cotizacion.valorTotal)}"></td>
+                            <td th:text="'$ ' + ${#numbers.formatDecimal(cotizacion.valorTotal, 1, 'POINT', 0, 'COMMA')}"></td>
                             <td th:text="${#lists.size(cotizacion.productos)}"></td>
                             <td>
                                 <span th:class="'estado estado-' + ${cotizacion.estado}" 
