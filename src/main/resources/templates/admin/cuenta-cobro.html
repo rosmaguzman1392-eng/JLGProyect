@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>Nueva Cuenta de Cobro - JLG Aislamientos</title>
+<style>
+    body { font-family: 'Segoe UI', sans-serif; background: #f5f7fa; margin: 0; padding: 20px; }
+    .container { max-width: 650px; margin: 0 auto; background: white; padding: 30px;
+                 border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+    h1 { color: #1a2332; font-size: 24px; }
+    .form-group { margin-bottom: 15px; }
+    label { display: block; font-weight: bold; color: #334155; font-size: 14px; margin-bottom: 5px; }
+    input, select, textarea { width: 100%; padding: 10px; border: 1px solid #e2e8f0;
+                              border-radius: 6px; box-sizing: border-box; }
+    .btn { background: #007bff; color: white; border: none; padding: 12px 24px;
+           border-radius: 6px; cursor: pointer; font-weight: bold; width: 100%; }
+    .alert-success { background: #d4edda; color: #155724; padding: 12px; border-radius: 6px; margin-bottom: 15px; }
+    .alert-info { background: #fff3cd; color: #856404; padding: 12px; border-radius: 6px; margin-bottom: 15px; }
+    .volver { display: inline-block; margin-top: 15px; color: #007bff; text-decoration: none; }
+</style>
+</head>
+<body>
+<div class="container">
+    <h1>💰 Nueva Cuenta de Cobro</h1>
+    <div th:if="${param.exito}" class="alert-success">✅ Cuenta de cobro generada exitosamente.</div>
+    <div th:if="${#lists.isEmpty(cotizacionesAprobadas)}" class="alert-info">
+        ⚠️ No hay cotizaciones en estado APROBADA. Aprueba una cotización primero para poder generar su cuenta de cobro.
+    </div>
+
+    <form th:action="@{/admin/cuentas-cobro/guardar}" th:object="${cuentaCobro}" method="post">
+        <div class="form-group">
+            <label>Cotización aprobada *</label>
+            <select id="selectCotizacion" th:field="*{cotizacionId}" required>
+                <option value="">-- Seleccione --</option>
+                <option th:each="cot : ${cotizacionesAprobadas}"
+                        th:value="${cot.id}"
+                        th:data-cliente="${cot.cliente}"
+                        th:data-valor="${cot.valorTotal}"
+                        th:text="${cot.id + '  |  ' + cot.cliente}"></option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label>Cliente *</label>
+            <input type="text" id="campoCliente" th:field="*{cliente}" required>
+        </div>
+        <div class="form-group">
+            <label>Valor total (COP) *</label>
+            <input type="number" step="0.01" min="0" id="campoValor" th:field="*{valorTotal}" required>
+        </div>
+        <div class="form-group">
+            <label>Fecha de emisión *</label>
+            <input type="date" th:field="*{fechaEmision}" required>
+        </div>
+        <div class="form-group">
+            <label>Estado de pago</label>
+            <select th:field="*{estado}">
+                <option value="PENDIENTE_DE_PAGO">Pendiente de pago</option>
+                <option value="PAGADO">Pagado</option>
+                <option value="EN_MORA">En mora</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label>Concepto / descripción</label>
+            <textarea th:field="*{descripcion}" placeholder="Ej: Servicio de aislamiento térmico ejecutado..."></textarea>
+        </div>
+        <button type="submit" class="btn">Generar Cuenta de Cobro</button>
+    </form>
+    <a th:href="@{/admin/dashboard}" class="volver">← Volver al panel</a>
+</div>
+
+<script>
+    // Al elegir una cotización, autocompleta cliente y valor
+    document.getElementById('selectCotizacion').addEventListener('change', function () {
+        const opcion = this.options[this.selectedIndex];
+        document.getElementById('campoCliente').value = opcion.dataset.cliente || '';
+        document.getElementById('campoValor').value = opcion.dataset.valor || '';
+    });
+</script>
+</body>
+</html>

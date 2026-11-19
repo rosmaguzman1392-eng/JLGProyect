@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>Nueva Cotización - JLG Aislamientos</title>
+<style>
+    body { font-family: 'Segoe UI', sans-serif; background: #f5f7fa; margin: 0; padding: 20px; }
+    .container { max-width: 900px; margin: 0 auto; background: white; padding: 30px;
+                 border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+    h1 { color: #1a2332; font-size: 24px; }
+    .form-group { margin-bottom: 15px; }
+    label { display: block; font-weight: bold; color: #334155; font-size: 14px; margin-bottom: 5px; }
+    input, select, textarea { width: 100%; padding: 10px; border: 1px solid #e2e8f0;
+                              border-radius: 6px; box-sizing: border-box; }
+    table { width: 100%; border-collapse: collapse; margin: 10px 0; }
+    th, td { padding: 8px; border-bottom: 1px solid #e2e8f0; font-size: 14px; }
+    .btn { background: #007bff; color: white; border: none; padding: 10px 20px;
+           border-radius: 6px; cursor: pointer; font-weight: bold; }
+    .btn-sec { background: #6b7280; }
+    .btn-del { background: #e53e3e; padding: 6px 10px; }
+    .total { font-size: 20px; font-weight: bold; color: #1a2332; text-align: right; margin: 15px 0; }
+    .alert-success { background: #d4edda; color: #155724; padding: 12px; border-radius: 6px; margin-bottom: 15px; }
+    .volver { display: inline-block; margin-top: 15px; color: #007bff; text-decoration: none; }
+</style>
+</head>
+<body>
+<div class="container">
+    <h1>📋 Nueva Cotización</h1>
+    <div th:if="${param.exito}" class="alert-success">✅ Cotización guardada exitosamente.</div>
+
+    <form th:action="@{/admin/cotizaciones/guardar}" th:object="${cotizacion}" method="post">
+        <div class="form-group">
+            <label>Cliente *</label>
+            <input type="text" th:field="*{cliente}" placeholder="Ej: HOTEL HILTON" required>
+        </div>
+        <div class="form-group">
+            <label>Fecha de cotización *</label>
+            <input type="date" th:field="*{fechaCotizacion}" required>
+        </div>
+        <div class="form-group">
+            <label>Estado</label>
+            <select th:field="*{estado}">
+                <option value="PENDIENTE">Pendiente</option>
+                <option value="APROBADA">Aprobada</option>
+                <option value="RECHAZADA">Rechazada</option>
+            </select>
+        </div>
+
+        <h3>Productos de la cotización</h3>
+        <table id="tablaProductos">
+            <thead>
+                <tr><th>Producto</th><th>Cantidad</th><th>Valor unitario</th><th>Subtotal</th><th></th></tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+        <button type="button" class="btn btn-sec" onclick="agregarFila()">+ Agregar producto</button>
+
+        <div class="total">Valor total: $ <span id="totalVisible">0</span></div>
+        <input type="hidden" th:field="*{valorTotal}" id="valorTotalOculto">
+
+        <button type="submit" class="btn">Guardar Cotización</button>
+    </form>
+    <a th:href="@{/admin/cotizaciones}" class="volver">← Ver listado de cotizaciones</a>
+</div>
+
+<script>
+    let indice = 0;
+    function agregarFila() {
+        const tbody = document.querySelector('#tablaProductos tbody');
+        const tr = document.createElement('tr');
+        tr.innerHTML =
+            '<td><input type="text" name="productos[' + indice + '].nombre" required></td>' +
+            '<td><input type="number" step="0.1" min="0" class="cantidad" name="productos[' + indice + '].cantidad" oninput="calcular()" required></td>' +
+            '<td><input type="number" step="1" min="0" class="vunit" name="productos[' + indice + '].valorUnitario" oninput="calcular()" required></td>' +
+            '<td class="subtotal">$0</td>' +
+            '<td><button type="button" class="btn btn-del" onclick="eliminarFila(this)">X</button></td>';
+        tbody.appendChild(tr);
+        indice++;
+    }
+    function eliminarFila(boton) {
+        boton.closest('tr').remove();
+        reindexar();
+        calcular();
+    }
+    function reindexar() {
+        document.querySelectorAll('#tablaProductos tbody tr').forEach((tr, i) => {
+            tr.querySelectorAll('input').forEach(inp => {
+                inp.name = inp.name.replace(/productos\[\d+\]/, 'productos[' + i + ']');
+            });
+        });
+        indice = document.querySelectorAll('#tablaProductos tbody tr').length;
+    }
+    function calcular() {
+        let total = 0;
+        document.querySelectorAll('#tablaProductos tbody tr').forEach(tr => {
+            const cant = parseFloat(tr.querySelector('.cantidad').value) || 0;
+            const vu = parseFloat(tr.querySelector('.vunit').value) || 0;
+            const sub = cant * vu;
+            tr.querySelector('.subtotal').textContent = '$' + sub.toLocaleString('es-CO');
+            total += sub;
+        });
+        document.getElementById('totalVisible').textContent = total.toLocaleString('es-CO');
+        document.getElementById('valorTotalOculto').value = total;
+    }
+    agregarFila(); // una fila inicial
+</script>
+</body>
+</html>
