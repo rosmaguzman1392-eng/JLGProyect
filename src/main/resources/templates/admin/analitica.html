@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>Analítica con Aggregations - JLG Aislamientos</title>
+<style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Segoe UI', sans-serif; background: #f5f7fa; display: flex; min-height: 100vh; }
+    .sidebar { width: 260px; background: #1a2332; color: white; padding: 20px 0; position: fixed; height: 100vh; overflow-y: auto; }
+    .sidebar-header { padding: 0 20px 20px; border-bottom: 1px solid #2d3748; margin-bottom: 20px; }
+    .sidebar-header img { width: 100%; max-width: 200px; height: auto; }
+    .sidebar-menu { list-style: none; }
+    .sidebar-menu li { margin: 5px 0; }
+    .sidebar-menu a { display: flex; align-items: center; padding: 12px 20px; color: #cbd5e0; text-decoration: none; }
+    .sidebar-menu a:hover, .sidebar-menu a.active { background: #2d3748; color: white; border-left: 3px solid #007bff; }
+    .sidebar-menu .icon { margin-right: 12px; font-size: 18px; }
+    .main-content { margin-left: 260px; flex: 1; display: flex; flex-direction: column; }
+    .header { background: white; padding: 15px 30px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+    .header h1 { font-size: 24px; color: #1a2332; }
+    .header p { color: #718096; font-size: 13px; margin-top: 4px; }
+    .content { padding: 25px; }
+    .kpi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 18px; margin-bottom: 25px; }
+    .kpi-card { background: white; padding: 20px; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); border-left: 4px solid #007bff; }
+    .kpi-card h3 { color: #718096; font-size: 12px; margin-bottom: 8px; text-transform: uppercase; }
+    .kpi-card .value { font-size: 26px; font-weight: bold; color: #1a2332; }
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px; }
+    .panel { background: white; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); padding: 20px; margin-bottom: 20px; }
+    .panel h2 { font-size: 17px; color: #1a2332; margin-bottom: 6px; }
+    .pipeline { background: #0f172a; color: #7dd3fc; font-family: Consolas, monospace; font-size: 11px;
+                 padding: 10px; border-radius: 8px; margin: 8px 0 14px; overflow-x: auto; white-space: pre; }
+    table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    th { background: #f8fafc; text-align: left; padding: 10px; color: #1a2332; border-bottom: 2px solid #e2e8f0; }
+    td { padding: 10px; border-bottom: 1px solid #e2e8f0; color: #334155; }
+    .estado { padding: 3px 10px; border-radius: 12px; font-size: 11px; font-weight: bold; }
+    .estado-Pendiente { background: #fef3c7; color: #92400e; }
+    .estado-Enviada { background: #dbeafe; color: #1e40af; }
+    .estado-Aprobada { background: #d1fae5; color: #065f46; }
+    .estado-Rechazada { background: #fee2e2; color: #991b1b; }
+    .filters { background: white; padding: 14px 20px; border-radius: 12px; margin-bottom: 20px;
+               box-shadow: 0 2px 8px rgba(0,0,0,0.08); display: flex; gap: 12px; align-items: center; }
+    .filters select, .filters button { padding: 9px 14px; border-radius: 6px; border: 1px solid #e2e8f0; font-size: 13px; }
+    .filters button { background: #007bff; color: white; border: none; font-weight: bold; cursor: pointer; }
+    @media (max-width: 900px) { .grid-2 { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+<aside class="sidebar">
+    <div class="sidebar-header"><img src="/img/LogoJLG.jpeg" alt="JLG Aislamientos"></div>
+    <ul class="sidebar-menu">
+        <li><a href="/admin/dashboard"><span class="icon">🏠</span> Panel Principal</a></li>
+        <li><a href="/admin/cotizaciones"><span class="icon">📋</span> Cotizaciones</a></li>
+        <li><a href="/admin/cotizaciones/nueva"><span class="icon">➕</span> Nueva Cotización</a></li>
+        <li><a href="/admin/cuentas-cobro/nueva"><span class="icon">💰</span> Nueva Cuenta de Cobro</a></li>
+        <li><a href="/admin/analitica" class="active"><span class="icon">📊</span> Analítica (Aggregations)</a></li>
+    </ul>
+</aside>
+
+<div class="main-content">
+    <header class="header">
+        <h1>📊 Analítica con MongoDB Aggregation Pipeline</h1>
+        <p>Base: jlg_aislamientos_modelo (Atlas) · Etapas: $match, $group, $lookup, $unwind, $sort, $limit</p>
+    </header>
+
+    <div class="content">
+
+        <!-- KPIs: $group + $cond -->
+        <div class="kpi-grid">
+            <div class="kpi-card"><h3>Total cotizaciones</h3>
+                <div class="value" th:text="${resumen.totalCotizaciones}">0</div></div>
+            <div class="kpi-card" style="border-left-color:#8b5cf6"><h3>Valor total cotizado</h3>
+                <div class="value" th:text="'$ ' + ${#numbers.formatDecimal(resumen.valorTotalCotizado == null ? 0 : resumen.valorTotalCotizado, 1, 'POINT', 0, 'COMMA')}">$0</div></div>
+            <div class="kpi-card" style="border-left-color:#f59e0b"><h3>Ticket promedio</h3>
+                <div class="value" th:text="'$ ' + ${#numbers.formatDecimal(resumen.ticketPromedio == null ? 0 : resumen.ticketPromedio, 1, 'POINT', 0, 'COMMA')}">$0</div></div>
+            <div class="kpi-card" style="border-left-color:#10b981"><h3>Cotizaciones aprobadas</h3>
+                <div class="value" th:text="${resumen.cotizacionesAprobadas}">0</div></div>
+        </div>
+
+        <div class="panel">
+            <h2>Pipeline del resumen ($group + $cond)</h2>
+            <div class="pipeline">[ { $group: { _id: null, totalCotizaciones: { $sum: 1 }, valorTotalCotizado: { $sum: "$valorTotal" }, ticketPromedio: { $avg: "$valorTotal" }, cotizacionesAprobadas: { $sum: { $cond: [ { $eq: ["$estado","Aprobada"] }, 1, 0 ] } } } } ]</div>
+        </div>
+
+        <!-- Filtro dinámico: $match -->
+        <form class="filters" th:action="@{/admin/analitica}" method="get">
+            <span style="font-size:13px;color:#718096">Filtrar cotizaciones por estado ($match):</span>
+            <select name="estado">
+                <option value="">Todos</option>
+                <option value="Pendiente" th:selected="${estadoFiltro == 'Pendiente'}">Pendiente</option>
+                <option value="Enviada" th:selected="${estadoFiltro == 'Enviada'}">Enviada</option>
+                <option value="Aprobada" th:selected="${estadoFiltro == 'Aprobada'}">Aprobada</option>
+                <option value="Rechazada" th:selected="${estadoFiltro == 'Rechazada'}">Rechazada</option>
+            </select>
+            <button type="submit">Aplicar filtro</button>
+        </form>
+
+        <div class="grid-2">
+            <!-- Top clientes -->
+            <div class="panel" style="margin-bottom:0">
+                <h2>🏆 Top 5 clientes por valor cotizado</h2>
+                <div class="pipeline">[ { $match: { valorTotal: { $gt: 0 } } },
+  { $group: { _id: "$nombreCliente", numCotizaciones: { $sum: 1 }, totalCotizado: { $sum: "$valorTotal" } } },
+  { $sort: { totalCotizado: -1 } }, { $limit: 5 } ]</div>
+                <table>
+                    <thead><tr><th>Cliente</th><th>N° Cot.</th><th>Total cotizado</th></tr></thead>
+                    <tbody>
+                    <tr th:each="c : ${topClientes}">
+                        <td th:text="${c.cliente}"></td>
+                        <td th:text="${c.numCotizaciones}"></td>
+                        <td th:text="'$ ' + ${#numbers.formatDecimal(c.totalCotizado, 1, 'POINT', 0, 'COMMA')}"></td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Top productos (array embebido) -->
+            <div class="panel" style="margin-bottom:0">
+                <h2>🧰 Materiales con mayor valor vendido</h2>
+                <div class="pipeline">[ { $unwind: "$productos" },
+  { $group: { _id: "$productos.nombre", cantidadTotal: { $sum: "$productos.cantidad" }, valorTotal: { $sum: "$productos.valorTotalProducto" } } },
+  { $sort: { valorTotal: -1 } }, { $limit: 8 } ]</div>
+                <table>
+                    <thead><tr><th>Producto</th><th>Cantidad</th><th>Valor total</th></tr></thead>
+                    <tbody>
+                    <tr th:each="p : ${topProductos}">
+                        <td th:text="${p.producto}"></td>
+                        <td th:text="${#numbers.formatDecimal(p.cantidadTotal, 1, 'POINT', 1, 'COMMA')}"></td>
+                        <td th:text="'$ ' + ${#numbers.formatDecimal(p.valorTotal, 1, 'POINT', 0, 'COMMA')}"></td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Catálogo productos: $group por categoría -->
+        <div class="panel">
+            <h2>🗂️ Productos activos por categoría (catálogo `productos`)</h2>
+            <div class="pipeline">[ { $match: { estado: "Activo" } },
+  { $group: { _id: "$categoria", totalProductos: { $sum: 1 } } },
+  { $sort: { totalProductos: -1 } } ]</div>
+            <table>
+                <thead><tr><th>Categoría</th><th>Productos activos</th></tr></thead>
+                <tbody>
+                <tr th:each="cat : ${productosPorCategoria}">
+                    <td th:text="${cat.categoria}"></td>
+                    <td th:text="${cat.totalProductos}"></td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- $lookup: JOIN cotizaciones -> clientes -->
+        <div class="panel">
+            <h2>🔗 Últimas cotizaciones enriquecidas con datos del cliente ($lookup)</h2>
+            <div class="pipeline">[ { $match: { estado: ? } },
+  { $lookup: { from: "clientes", localField: "clienteId", foreignField: "_id", as: "detalleCliente" } },
+  { $unwind: "$detalleCliente" },
+  { $project: { numeroCotizacion: 1, nombreCliente: 1, fechaCotizacion: 1, valorTotal: 1, estado: 1, tipoCliente: "$detalleCliente.tipoCliente", direccion: "$detalleCliente.direccion" } },
+  { $sort: { fechaCotizacion: -1 } }, { $limit: 10 } ]</div>
+            <table>
+                <thead><tr><th>N°</th><th>Fecha</th><th>Cliente</th><th>Tipo</th><th>Dirección</th><th>Valor</th><th>Estado</th></tr></thead>
+                <tbody>
+                <tr th:each="c : ${cotizacionesDetalle}">
+                    <td th:text="${c.numeroCotizacion}"></td>
+                    <td th:text="${#dates.format(c.fechaCotizacion, 'dd/MM/yyyy')}"></td>
+                    <td th:text="${c.cliente}"></td>
+                    <td th:text="${c.tipoCliente}"></td>
+                    <td th:text="${c.direccion}"></td>
+                    <td th:text="'$ ' + ${#numbers.formatDecimal(c.valorTotal, 1, 'POINT', 0, 'COMMA')}"></td>
+                    <td><span th:class="'estado estado-' + ${c.estado}" th:text="${c.estado}"></span></td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+
+    </div>
+</div>
+</body>
+</html>
